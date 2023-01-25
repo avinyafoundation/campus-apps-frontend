@@ -1,0 +1,4 @@
+{
+    "sms_api_url": "http://localhost:9090",
+    "admissionsApplicationBffApiUrl": "https://3a907137-52a3-4196-9e0d-22d054ea5789-dev.e1-us-east-azure.choreoapis.dev/gkwb/application-bff-api/0.33.0"
+}

@@ -34,6 +34,9 @@ dependencies:
   vector_math: ^2.1.2
   http: ^0.13.5
   jwt_decoder: ^2.0.1
+  url_strategy: ^0.2.0
+  openid_client: ^0.4.7
+  path_to_regexp: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -249,6 +252,8 @@ flutter:
     - packages/shrine_images/35-0.jpg
     - packages/shrine_images/36-0.jpg
     - packages/shrine_images/37-0.jpg
+    - assets/config/dev.json
+    - assets/images/
 
   generate: true
   uses-material-design: true
@@ -256,3 +261,4 @@ flutter:
     - family: GalleryIcons
       fonts:
         - asset: packages/flutter_gallery_assets/fonts/GalleryIcons.ttf
+          

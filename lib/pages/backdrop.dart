@@ -60,7 +60,7 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
           animationController: _settingsPanelController,
         );
     _homePage = widget.homePage ?? const HomePage();
-    _loginPage = widget.loginPage ?? const LoginPage();
+    // _loginPage = widget.loginPage ?? const LoginPage();
   }
 
   @override

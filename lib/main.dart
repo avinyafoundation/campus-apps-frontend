@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,28 @@ import 'package:gallery/pages/splash.dart';
 import 'package:gallery/routes.dart';
 import 'package:gallery/themes/gallery_theme_data.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_strategy/url_strategy.dart';
+import 'config/app_config.dart';
+import 'app.dart';
 
 export 'package:gallery/data/demos.dart' show pumpDeferredLibraries;
 
 void main() async {
+  // Use package:url_strategy until this pull request is released:
+  // https://github.com/flutter/flutter/pull/77103
+
+  // Use to setHashUrlStrategy() to use "/#/" in the address bar (default). Use
+  // setPathUrlStrategy() to use the path. You may need to configure your web
+  // server to redirect all paths to index.html.
+  //
+  // On mobile platforms, both functions are no-ops.
+  setHashUrlStrategy();
+  // setPathUrlStrategy();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AppConfig.forEnvironment('dev');
+
   GoogleFonts.config.allowRuntimeFetching = false;
   GalleryApp galleryApp = GalleryApp();
   campusAppsPortalInstance.setAuth(galleryApp._auth);
@@ -30,7 +49,7 @@ void main() async {
   campusAppsPortalInstance.setSignedIn(signedIn);
   galleryApp._auth.getSignedIn().then((value) => signedIn = value);
   log('signedIn 2: $signedIn! ');
-  runApp(galleryApp);
+  runApp(AppsPortal());
 }
 
 class GalleryApp extends StatelessWidget {

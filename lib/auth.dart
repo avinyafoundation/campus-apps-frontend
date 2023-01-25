@@ -118,7 +118,7 @@ class CampusAppsPortalAuth extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    String logoutUrl = "https://api.asgardeo.io/t/avinyafoundation/oidc/logout";
+    String logoutUrl = "https://api.asgardeo.io/t/avinyatest/oidc/logout";
     if (await canLaunchUrl(Uri.parse(logoutUrl))) {
       await launchUrl(Uri.parse(logoutUrl), mode: LaunchMode.platformDefault);
     } else {

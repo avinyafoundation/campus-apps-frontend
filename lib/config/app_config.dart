@@ -7,10 +7,10 @@ class AppConfig {
   static String campusAttendanceBffApiUrl = 'http://localhost:6060';
   static String campusAttendanceBffApiKey = '';
   static String choreoSTSEndpoint = "https://sts.choreo.dev/oauth2/token";
-  static String choreoSTSClientID = "";
+  static String choreoSTSClientID = "x23_1tY7kAUtLUH9il9I3YwyrJca";
   static String asgardeoTokenEndpoint =
-      "https://api.asgardeo.io/t/avinyafoundation/oauth2/token";
-  static String asgardeoClientId = "";
+      "https://api.asgardeo.io/t/avinyatest/oauth2/token";
+  static String asgardeoClientId = "pJ2gM2o6yXN4f60FypEYWWERrAoa";
   static var apiTokens = null;
   static String applicationName = 'Avinya Academy Campus - Config Portal';
   static String applicationVersion = '0.1.0';
