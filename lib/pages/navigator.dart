@@ -38,6 +38,13 @@ class _SMSNavigatorState extends State<SMSNavigator> {
 
     return Navigator(
       key: widget.navigatorKey,
+      onPopPage: (route, dynamic result) {
+        if (route.settings is Page &&
+            (route.settings as Page).key == _galleryKey) {
+          routeState.go('/gallery');
+        }
+        return route.didPop(result);
+      },
       pages: [
         if (routeState.route.pathTemplate == '/signin')
           // Display the sign in screen.
