@@ -2,58 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_gen/gen_l10n/gallery_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
-import 'package:gallery/auth.dart';
 import 'package:gallery/constants.dart';
-import 'package:gallery/data/campus_apps_portal.dart';
 import 'package:gallery/data/gallery_options.dart';
 import 'package:gallery/pages/backdrop.dart';
 import 'package:gallery/pages/splash.dart';
 import 'package:gallery/routes.dart';
 import 'package:gallery/themes/gallery_theme_data.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_strategy/url_strategy.dart';
-import 'config/app_config.dart';
-import 'app.dart';
 
 export 'package:gallery/data/demos.dart' show pumpDeferredLibraries;
 
-void main() async {
-  // Use package:url_strategy until this pull request is released:
-  // https://github.com/flutter/flutter/pull/77103
-
-  // Use to setHashUrlStrategy() to use "/#/" in the address bar (default). Use
-  // setPathUrlStrategy() to use the path. You may need to configure your web
-  // server to redirect all paths to index.html.
-  //
-  // On mobile platforms, both functions are no-ops.
-  setHashUrlStrategy();
-  // setPathUrlStrategy();
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await AppConfig.forEnvironment('dev');
-
+void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
-  GalleryApp galleryApp = GalleryApp();
-  campusAppsPortalInstance.setAuth(galleryApp._auth);
-  bool signedIn = await campusAppsPortalInstance.getSignedIn();
-  log('signedIn 1: $signedIn! ');
-  campusAppsPortalInstance.setSignedIn(signedIn);
-  galleryApp._auth.getSignedIn().then((value) => signedIn = value);
-  log('signedIn 2: $signedIn! ');
-  runApp(AppsPortal());
+  runApp(const GalleryApp());
 }
 
 class GalleryApp extends StatelessWidget {
-  GalleryApp({
+  const GalleryApp({
     super.key,
     this.initialRoute,
     this.isTestMode = false,
@@ -61,7 +31,7 @@ class GalleryApp extends StatelessWidget {
 
   final String? initialRoute;
   final bool isTestMode;
-  final _auth = CampusAppsPortalAuth();
+  static const String loginRoute = '/signin';
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +50,7 @@ class GalleryApp extends StatelessWidget {
           final options = GalleryOptions.of(context);
           return MaterialApp(
             restorationScopeId: 'rootGallery',
-            title: 'Avinya Academy Apps Portal',
+            title: 'Flutter Gallery',
             debugShowCheckedModeBanner: false,
             themeMode: options.themeMode,
             theme: GalleryThemeData.lightThemeData.copyWith(
@@ -93,7 +63,7 @@ class GalleryApp extends StatelessWidget {
               ...GalleryLocalizations.localizationsDelegates,
               LocaleNamesLocalizationsDelegate()
             ],
-            initialRoute: initialRoute,
+            initialRoute: loginRoute,
             supportedLocales: GalleryLocalizations.supportedLocales,
             locale: options.locale,
             localeListResolutionCallback: (locales, supportedLocales) {

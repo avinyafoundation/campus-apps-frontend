@@ -12,19 +12,19 @@ class Credentials {
   Credentials(this.username, this.password);
 }
 
-class LogInScreen extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   final ValueChanged<Credentials> onSignIn;
 
-  const LogInScreen({
+  const LoginPage({
     required this.onSignIn,
     super.key,
   });
 
   @override
-  State<LogInScreen> createState() => _LogInScreenState();
+  State<LoginPage> createState() => _LogInScreenState();
 }
 
-class _LogInScreenState extends State<LogInScreen> {
+class _LogInScreenState extends State<LoginPage> {
   String _clientId = AppConfig.asgardeoClientId;
   final String _issuerUrl = AppConfig.asgardeoTokenEndpoint;
 
