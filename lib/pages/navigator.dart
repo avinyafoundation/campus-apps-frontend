@@ -50,7 +50,7 @@ class _SMSNavigatorState extends State<SMSNavigator> {
           // Display the sign in screen.
           FadeTransitionPage<void>(
             key: _signInKey,
-            child: LogInScreen(
+            child: LoginPage(
               onSignIn: (credentials) async {
                 var signedIn = await authState.signIn(
                     credentials.username, credentials.password);
