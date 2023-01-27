@@ -1,6 +1,7 @@
 // Copyright 2019 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_gen/gen_l10n/gallery_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:gallery/auth.dart';
 import 'package:gallery/constants.dart';
+import 'package:gallery/data/campus_apps_portal.dart';
 import 'package:gallery/data/gallery_options.dart';
 import 'package:gallery/pages/backdrop.dart';
 import 'package:gallery/pages/splash.dart';
@@ -35,14 +37,14 @@ void main() async {
 
   // await AppConfig.forEnvironment('dev');
 
-  // GoogleFonts.config.allowRuntimeFetching = false;
-  // GalleryApp galleryApp = GalleryApp();
-  // campusAppsPortalInstance.setAuth(galleryApp._auth);
-  // bool signedIn = await campusAppsPortalInstance.getSignedIn();
-  // log('signedIn 1: $signedIn! ');
-  // campusAppsPortalInstance.setSignedIn(signedIn);
-  // galleryApp._auth.getSignedIn().then((value) => signedIn = value);
-  // log('signedIn 2: $signedIn! ');
+  GoogleFonts.config.allowRuntimeFetching = false;
+  GalleryApp galleryApp = GalleryApp();
+  campusAppsPortalInstance.setAuth(galleryApp._auth);
+  bool signedIn = await campusAppsPortalInstance.getSignedIn();
+  log('signedIn 1: $signedIn! ');
+  campusAppsPortalInstance.setSignedIn(signedIn);
+  galleryApp._auth.getSignedIn().then((value) => signedIn = value);
+  log('signedIn 2: $signedIn! ');
   runApp(GalleryApp());
 }
 
