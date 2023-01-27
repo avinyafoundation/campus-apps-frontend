@@ -37,19 +37,19 @@ void main() async {
   setHashUrlStrategy();
   // setPathUrlStrategy();
 
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
 
-  await AppConfig.forEnvironment('dev');
+  // await AppConfig.forEnvironment('dev');
 
-  GoogleFonts.config.allowRuntimeFetching = false;
-  GalleryApp galleryApp = GalleryApp();
-  campusAppsPortalInstance.setAuth(galleryApp._auth);
-  bool signedIn = await campusAppsPortalInstance.getSignedIn();
-  log('signedIn 1: $signedIn! ');
-  campusAppsPortalInstance.setSignedIn(signedIn);
-  galleryApp._auth.getSignedIn().then((value) => signedIn = value);
-  log('signedIn 2: $signedIn! ');
-  runApp(AppsPortal());
+  // GoogleFonts.config.allowRuntimeFetching = false;
+  // GalleryApp galleryApp = GalleryApp();
+  // campusAppsPortalInstance.setAuth(galleryApp._auth);
+  // bool signedIn = await campusAppsPortalInstance.getSignedIn();
+  // log('signedIn 1: $signedIn! ');
+  // campusAppsPortalInstance.setSignedIn(signedIn);
+  // galleryApp._auth.getSignedIn().then((value) => signedIn = value);
+  // log('signedIn 2: $signedIn! ');
+  runApp(GalleryApp());
 }
 
 class GalleryApp extends StatelessWidget {
@@ -62,6 +62,7 @@ class GalleryApp extends StatelessWidget {
   final String? initialRoute;
   final bool isTestMode;
   final _auth = CampusAppsPortalAuth();
+  static const String loginRoute = '/signin';
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +94,7 @@ class GalleryApp extends StatelessWidget {
               ...GalleryLocalizations.localizationsDelegates,
               LocaleNamesLocalizationsDelegate()
             ],
-            initialRoute: initialRoute,
+            initialRoute: loginRoute,
             supportedLocales: GalleryLocalizations.supportedLocales,
             locale: options.locale,
             localeListResolutionCallback: (locales, supportedLocales) {

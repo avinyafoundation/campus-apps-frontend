@@ -169,7 +169,17 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
       builder: (context, isSettingsOpen, child) {
         return ExcludeSemantics(
           excluding: isSettingsOpen,
-          child: FocusTraversalGroup(child: _loginPage),
+          child: FocusTraversalGroup(
+            child: LoginPage(
+                // onSignIn: (credentials) async {
+                //   var signedIn = await authState.signIn(
+                //       credentials.username, credentials.password);
+                //   if (signedIn) {
+                //     await routeState.go('/gallery');
+                //   }
+                // },
+                ),
+          ),
         );
       },
     );

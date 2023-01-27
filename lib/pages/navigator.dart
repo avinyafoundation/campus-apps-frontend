@@ -43,15 +43,15 @@ class _SMSNavigatorState extends State<SMSNavigator> {
           // Display the sign in screen.
           FadeTransitionPage<void>(
             key: _signInKey,
-            child: LogInScreen(
-              onSignIn: (credentials) async {
-                var signedIn = await authState.signIn(
-                    credentials.username, credentials.password);
-                if (signedIn) {
-                  await routeState.go('/gallery');
-                }
-              },
-            ),
+            child: LoginPage(
+                // onSignIn: (credentials) async {
+                //   var signedIn = await authState.signIn(
+                //       credentials.username, credentials.password);
+                //   if (signedIn) {
+                //     await routeState.go('/gallery');
+                //   }
+                // },
+                ),
           )
         else if (routeState.route.pathTemplate == '/gallery')
           // Display the sign in screen.
