@@ -176,14 +176,14 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
           excluding: isSettingsOpen,
           child: FocusTraversalGroup(
             child: LoginPage(
-              onSignIn: (credentials) async {
-                var signedIn = await authState.signIn(
-                    credentials.username, credentials.password);
-                if (signedIn) {
-                  await routeState.go('/gallery');
-                }
-              },
-            ),
+                // onSignIn: (credentials) async {
+                //   var signedIn = await authState.signIn(
+                //       credentials.username, credentials.password);
+                //   if (signedIn) {
+                //     await routeState.go('/gallery');
+                //   }
+                // },
+                ),
           ),
         );
       },
