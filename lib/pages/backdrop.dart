@@ -16,10 +16,7 @@ import 'package:gallery/pages/login.dart';
 import 'package:gallery/pages/settings.dart';
 import 'package:gallery/pages/settings_icon/icon.dart' as settings_icon;
 
-import '../auth.dart';
 import '../data/campus_apps_portal.dart';
-import '../routing/route_state.dart';
-// import '../studies/rally/login.dart';
 
 const double _settingsButtonWidth = 64;
 const double _settingsButtonHeightDesktop = 56;
@@ -128,8 +125,6 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
 
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {
     final isDesktop = isDisplayDesktop(context);
-    final authState = SMSAuthScope.of(context);
-    final routeState = RouteStateScope.of(context);
 
     bool signedIn = campusAppsPortalInstance.getSignedIn();
 
