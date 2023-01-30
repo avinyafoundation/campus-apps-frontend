@@ -19,11 +19,13 @@ class CampusAppsPortalAuth extends ChangeNotifier {
   var _openid_tokens;
 
   Future<bool> getSignedIn() async {
+    log("_guard signed in uuuuuu");
     if (_signedIn)
       return _signedIn; // already signed in -- todo - remove before production release
     var tokens = window.localStorage['openid_client:tokens'];
-
+    log("_guard signed in $tokens");
     if (tokens != null) {
+      log("_guard signed in truetrue");
       _openid_tokens = json.decode(tokens);
 
       if (_openid_tokens != null && _openid_tokens['access_token'] != null) {
@@ -106,6 +108,7 @@ class CampusAppsPortalAuth extends ChangeNotifier {
         }
       }
     } else {
+      log("_guard _signedIn_signedIn in");
       _signedIn = false;
       window.localStorage.clear();
     }

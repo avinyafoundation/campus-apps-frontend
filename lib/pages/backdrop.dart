@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/gallery_localizations.dart';
+import 'package:gallery/auth.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/data/gallery_options.dart';
 import 'package:gallery/layout/adaptive.dart';
@@ -15,6 +16,9 @@ import 'package:gallery/pages/home.dart';
 import 'package:gallery/pages/login.dart';
 import 'package:gallery/pages/settings.dart';
 import 'package:gallery/pages/settings_icon/icon.dart' as settings_icon;
+import 'package:gallery/routing/parsed_route.dart';
+import 'package:gallery/routing/parser.dart';
+import 'package:gallery/routing/route_state.dart';
 
 import '../data/campus_apps_portal.dart';
 
@@ -41,6 +45,11 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
   late Widget _settingsPage;
   late Widget _homePage;
   late Widget _loginPage;
+  final _auth = CampusAppsPortalAuth();
+
+  late final RouteState _routeState;
+  // late final SimpleRouterDelegate _routerDelegate;
+  // late final TemplateRouteParser _routeParser;
 
   @override
   void initState() {
@@ -61,6 +70,20 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
         );
     _homePage = widget.homePage ?? const HomePage();
     // _loginPage = widget.loginPage ?? const LoginPage();
+    var _routeParser = TemplateRouteParser(
+      allowedPaths: [
+        '/subscribe',
+        '/signin',
+        '/#access_token',
+      ],
+      guard: _guard,
+      initialRoute: '/signin',
+    );
+    _routeState = RouteState(_routeParser);
+    // Listen for when the user logs out and display the signin screen.
+    _auth.addListener(_handleAuthStateChanged);
+
+    // initState();
   }
 
   @override
@@ -167,6 +190,7 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
     final Widget loginPage = ValueListenableBuilder<bool>(
       valueListenable: _isSettingsOpenNotifier,
       builder: (context, isSettingsOpen, child) {
+        log('loginPageloginPage: ! ');
         return ExcludeSemantics(
           excluding: isSettingsOpen,
           child: FocusTraversalGroup(
@@ -310,6 +334,39 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<ParsedRoute> _guard(ParsedRoute from) async {
+    final _auth = CampusAppsPortalAuth();
+    final signedIn = await _auth.getSignedIn();
+    // String? jwt_sub = admissionSystemInstance.getJWTSub();
+    // const String signInRoute = '/signin';
+    final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+    final baseRoute = ParsedRoute('/demo', '/demo', {}, {});
+    // const String baseRoute = DemoPage.baseRoute;
+    // final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+
+    // Go to /apply if the user is not signed in
+    log("_guard signed in $from");
+    // log("_guard JWT sub ${jwt_sub}");
+    log("_guard from ${from.toString()}\n");
+    if (!signedIn && from != signInRoute) {
+      // Go to /signin if the user is not signed in
+      return signInRoute;
+    }
+    // Go to /application if the user is signed in and tries to go to /signin.
+    else if (signedIn && from == signInRoute) {
+      return baseRoute;
+    }
+    return from;
+  }
+
+  void _handleAuthStateChanged() async {
+    bool signedIn = await _auth.getSignedIn();
+    log("_guard signed in _handleAuthStateChanged $signedIn");
+    if (!signedIn) {
+      _routeState.go('/subscribe');
+    }
   }
 
   @override
