@@ -13,10 +13,10 @@ class Credentials {
 }
 
 class LoginPage extends StatefulWidget {
-  final ValueChanged<Credentials> onSignIn;
+  // final ValueChanged<Credentials> onSignIn;
 
   const LoginPage({
-    required this.onSignIn,
+    // required this.onSignIn,
     super.key,
   });
 

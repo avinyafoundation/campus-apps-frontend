@@ -34,6 +34,7 @@ class TemplateRouteParser extends RouteInformationParser<ParsedRoute> {
   Future<ParsedRoute> parseRouteInformation(
     RouteInformation routeInformation,
   ) async {
+    log("mypath :  ");
     final path = routeInformation.location!;
 
     String mypath = '';
