@@ -70,16 +70,16 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
         );
     _homePage = widget.homePage ?? const HomePage();
     // _loginPage = widget.loginPage ?? const LoginPage();
-    var _routeParser = TemplateRouteParser(
-      allowedPaths: [
-        '/subscribe',
-        '/signin',
-        '/#access_token',
-      ],
-      guard: _guard,
-      initialRoute: '/signin',
-    );
-    _routeState = RouteState(_routeParser);
+    // var _routeParser = TemplateRouteParser(
+    //   allowedPaths: [
+    //     '/subscribe',
+    //     '/signin',
+    //     '/#access_token',
+    //   ],
+    //   guard: _guard,
+    //   initialRoute: '/signin',
+    // );
+    // _routeState = RouteState(_routeParser);
     // Listen for when the user logs out and display the signin screen.
     _auth.addListener(_handleAuthStateChanged);
 

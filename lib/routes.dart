@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:developer';
+import 'dart:html';
 
 import 'package:dual_screen/dual_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ import 'package:gallery/studies/shrine/app.dart' deferred as shrine;
 import 'package:gallery/studies/shrine/routes.dart' as shrine_routes;
 import 'package:gallery/studies/starter/app.dart' as starter_app;
 import 'package:gallery/studies/starter/routes.dart' as starter_app_routes;
+import 'package:path_to_regexp/path_to_regexp.dart';
 
 typedef PathWidgetBuilder = Widget Function(BuildContext, String?);
 
@@ -130,6 +132,12 @@ class RouteConfiguration {
       if (regExpPattern.hasMatch(settings.name!)) {
         final firstMatch = regExpPattern.firstMatch(settings.name!)!;
         final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
+        var test = '';
+        test = settings.name!;
+
+        log("settings signed in firstMatch $test");
+        log("settings signed in match $match");
+
         if (kIsWeb) {
           return NoAnimationMaterialPageRoute<void>(
             builder: (context) => path.builder(context, match),
@@ -152,6 +160,31 @@ class RouteConfiguration {
 
     // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
     return null;
+  }
+
+  Future<ParsedRoute> _guard(ParsedRoute from) async {
+    final _auth = CampusAppsPortalAuth();
+    final signedIn = await _auth.getSignedIn();
+    // String? jwt_sub = admissionSystemInstance.getJWTSub();
+    // const String signInRoute = '/signin';
+    final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+    final baseRoute = ParsedRoute('/demo', '/demo', {}, {});
+    // const String baseRoute = DemoPage.baseRoute;
+    // final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+
+    // Go to /apply if the user is not signed in
+    log("_guard signed in $from");
+    // log("_guard JWT sub ${jwt_sub}");
+    log("_guard from ${from.toString()}\n");
+    if (!signedIn && from != signInRoute) {
+      // Go to /signin if the user is not signed in
+      return signInRoute;
+    }
+    // Go to /application if the user is signed in and tries to go to /signin.
+    else if (signedIn && from == signInRoute) {
+      return baseRoute;
+    }
+    return from;
   }
 }
 
