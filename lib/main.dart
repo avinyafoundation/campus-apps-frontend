@@ -45,6 +45,8 @@ void main() async {
   campusAppsPortalInstance.setSignedIn(signedIn);
   galleryApp._auth.getSignedIn().then((value) => signedIn = value);
   log('signedIn 2: $signedIn! ');
+  signedIn = await galleryApp._auth.getSignedIn();
+  log('signedIn 3: $signedIn! ');
   runApp(GalleryApp());
 }
 
