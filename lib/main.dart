@@ -42,11 +42,12 @@ void main() async {
   campusAppsPortalInstance.setAuth(galleryApp._auth);
   bool signedIn = await campusAppsPortalInstance.getSignedIn();
   log('signedIn 1: $signedIn! ');
-  campusAppsPortalInstance.setSignedIn(signedIn);
+
   galleryApp._auth.getSignedIn().then((value) => signedIn = value);
   log('signedIn 2: $signedIn! ');
   signedIn = await galleryApp._auth.getSignedIn();
   log('signedIn 3: $signedIn! ');
+  campusAppsPortalInstance.setSignedIn(signedIn);
   runApp(GalleryApp());
 }
 

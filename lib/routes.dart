@@ -8,6 +8,7 @@ import 'package:dual_screen/dual_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery/auth.dart';
+import 'package:gallery/data/campus_apps_portal.dart';
 import 'package:gallery/deferred_widget.dart';
 import 'package:gallery/main.dart';
 import 'package:gallery/pages/demo.dart';
@@ -134,25 +135,27 @@ class RouteConfiguration {
         final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
         var test = '';
         test = settings.name!;
+        var guarded_route = _guard(settings);
 
         log("settings signed in firstMatch $test");
-        log("settings signed in match $match");
+        log("settings signed in match $settings");
+        log("settings signed in guarded_route $guarded_route");
 
         if (kIsWeb) {
           return NoAnimationMaterialPageRoute<void>(
             builder: (context) => path.builder(context, match),
-            settings: settings,
+            settings: guarded_route,
           );
         }
         if (path.openInSecondScreen) {
           return TwoPanePageRoute<void>(
             builder: (context) => path.builder(context, match),
-            settings: settings,
+            settings: guarded_route,
           );
         } else {
           return MaterialPageRoute<void>(
             builder: (context) => path.builder(context, match),
-            settings: settings,
+            settings: guarded_route,
           );
         }
       }
@@ -162,29 +165,77 @@ class RouteConfiguration {
     return null;
   }
 
-  Future<ParsedRoute> _guard(ParsedRoute from) async {
-    final _auth = CampusAppsPortalAuth();
-    final signedIn = await _auth.getSignedIn();
+  static RouteSettings _guard(RouteSettings from) {
+    // final _auth = CampusAppsPortalAuth();
+    // final signedIn = await _auth.getSignedIn();
+    bool signedIn = campusAppsPortalInstance.getSignedIn();
     // String? jwt_sub = admissionSystemInstance.getJWTSub();
     // const String signInRoute = '/signin';
-    final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
-    final baseRoute = ParsedRoute('/demo', '/demo', {}, {});
+    // final signInRoute = '/signin';
+    final baseRoute = '/demo';
     // const String baseRoute = DemoPage.baseRoute;
-    // final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+    // final signInRoute = RouteSettings('/signin', arguments: {});
+    // create a new route settings object to pass with two arguments
+    // final signInRoute = RouteSettings('/signin', arguments: {'from': from});
+    // write a name argument to the route settings object
+    // signInRoute.name = '/signin';
+    // write a arguments argument to the route settings object
+    // signInRoute.arguments = {'from': from};
+    // write new route settings object to the route settings object with named arguments
+    // log from the route settings object
+    log("from ${from.toString()}");
+    final signInRoute = RouteSettings(name: '/signin', arguments: null);
+    //log signInRoute
+    log("signInRoute ${signInRoute.toString()}");
 
     // Go to /apply if the user is not signed in
-    log("_guard signed in $from");
+    log("_guard signed in 222$from");
     // log("_guard JWT sub ${jwt_sub}");
     log("_guard from ${from.toString()}\n");
-    if (!signedIn && from != signInRoute) {
+    if (!signedIn && from.toString() != signInRoute.toString()) {
       // Go to /signin if the user is not signed in
+      log("_guard signed in 333$from");
       return signInRoute;
     }
     // Go to /application if the user is signed in and tries to go to /signin.
-    else if (signedIn && from == signInRoute) {
-      return baseRoute;
+    else if (signedIn && from.toString() == signInRoute.toString()) {
+      log("_guard signed in 444$from");
+      return signInRoute;
     }
     return from;
+
+    // for (final path in paths) {
+    //   final regExpPattern = RegExp(path.pattern);
+    //   if (regExpPattern.hasMatch(from)) {
+    //     final firstMatch = regExpPattern.firstMatch(settings.name!)!;
+    //     final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
+    //     var test = '';
+    //     test = settings.name!;
+    //     var guarded_route = _guard(settings);
+
+    //     log("settings signed in firstMatch $test");
+    //     log("settings signed in match $settings");
+    //     log("settings signed in guarded_route $guarded_route");
+
+    //     if (kIsWeb) {
+    //       return NoAnimationMaterialPageRoute<void>(
+    //         builder: (context) => path.builder(context, match),
+    //         settings: guarded_route,
+    //       );
+    //     }
+    //     if (path.openInSecondScreen) {
+    //       return TwoPanePageRoute<void>(
+    //         builder: (context) => path.builder(context, match),
+    //         settings: guarded_route,
+    //       );
+    //     } else {
+    //       return MaterialPageRoute<void>(
+    //         builder: (context) => path.builder(context, match),
+    //         settings: guarded_route,
+    //       );
+    //     }
+    //   }
+    // }
   }
 }
 
