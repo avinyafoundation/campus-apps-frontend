@@ -14,8 +14,8 @@ import 'package:gallery/main.dart';
 import 'package:gallery/pages/demo.dart';
 import 'package:gallery/pages/home.dart';
 import 'package:gallery/routing/parsed_route.dart';
-import 'package:gallery/routing/parser.dart';
-import 'package:gallery/routing/route_state.dart';
+import 'package:gallery/routing/parser_new.dart';
+import 'package:gallery/routing/route_state_new.dart';
 import 'package:gallery/studies/crane/app.dart' deferred as crane;
 import 'package:gallery/studies/crane/routes.dart' as crane_routes;
 import 'package:gallery/studies/fortnightly/app.dart' deferred as fortnightly;
@@ -25,6 +25,7 @@ import 'package:gallery/studies/rally/routes.dart' as rally_routes;
 import 'package:gallery/studies/reply/app.dart' as reply;
 import 'package:gallery/studies/reply/routes.dart' as reply_routes;
 import 'package:gallery/studies/shrine/app.dart' deferred as shrine;
+import 'package:gallery/studies/shrine/login.dart';
 import 'package:gallery/studies/shrine/routes.dart' as shrine_routes;
 import 'package:gallery/studies/starter/app.dart' as starter_app;
 import 'package:gallery/studies/starter/routes.dart' as starter_app_routes;
@@ -120,13 +121,18 @@ class RouteConfiguration {
       (context, match) => const RootPage(),
       openInSecondScreen: false,
     ),
+    Path(
+      r'^' + starter_app_routes.loginRoute,
+      (context, match) => const LoginPage(),
+      openInSecondScreen: false,
+    ),
   ];
 
   /// The route generator callback used when the app is navigated to a named
   /// route. Set it on the [MaterialApp.onGenerateRoute] or
   /// [WidgetsApp.onGenerateRoute] to make use of the [paths] for route
   /// matching.
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  static Future<Route?> onGenerateRoute2(RouteSettings settings) async {
     log("settings signed in $settings");
     for (final path in paths) {
       final regExpPattern = RegExp(path.pattern);
@@ -135,9 +141,10 @@ class RouteConfiguration {
         final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
         var test = '';
         test = settings.name!;
-        var guarded_route = _guard(settings);
+        var guarded_route = await _guard(settings);
+        // var guarded_route_name = RouteSettings("/signin", null);
 
-        log("settings signed in firstMatch $test");
+        log("settings signed in firstMatch $match");
         log("settings signed in match $settings");
         log("settings signed in guarded_route $guarded_route");
 
@@ -165,24 +172,46 @@ class RouteConfiguration {
     return null;
   }
 
-  static RouteSettings _guard(RouteSettings from) {
-    // final _auth = CampusAppsPortalAuth();
-    // final signedIn = await _auth.getSignedIn();
-    bool signedIn = campusAppsPortalInstance.getSignedIn();
-    // String? jwt_sub = admissionSystemInstance.getJWTSub();
-    // const String signInRoute = '/signin';
-    // final signInRoute = '/signin';
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    for (final path in paths) {
+      final regExpPattern = RegExp(path.pattern);
+      if (regExpPattern.hasMatch(settings.name!)) {
+        final firstMatch = regExpPattern.firstMatch(settings.name!)!;
+        final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
+        if (kIsWeb) {
+          return NoAnimationMaterialPageRoute<void>(
+            builder: (context) => path.builder(context, match),
+            settings: settings,
+          );
+        }
+        if (path.openInSecondScreen) {
+          return TwoPanePageRoute<void>(
+            builder: (context) => path.builder(context, match),
+            settings: settings,
+          );
+        } else {
+          return MaterialPageRoute<void>(
+            builder: (context) => path.builder(context, match),
+            settings: settings,
+          );
+        }
+      }
+    }
+
+    // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
+    return null;
+  }
+
+  // static Route<dynamic>? onGenerateRouteHelper(RouteSettings settings) {
+  //   onGenerateRoute(settings).then((value) {
+  //     return value;
+  //   });
+  //   // return await onGenerateRoute(settings);
+  // }
+
+  static Future<RouteSettings> _guard(RouteSettings from) async {
+    bool signedIn = await campusAppsPortalInstance.getSignedIn();
     final baseRoute = '/demo';
-    // const String baseRoute = DemoPage.baseRoute;
-    // final signInRoute = RouteSettings('/signin', arguments: {});
-    // create a new route settings object to pass with two arguments
-    // final signInRoute = RouteSettings('/signin', arguments: {'from': from});
-    // write a name argument to the route settings object
-    // signInRoute.name = '/signin';
-    // write a arguments argument to the route settings object
-    // signInRoute.arguments = {'from': from};
-    // write new route settings object to the route settings object with named arguments
-    // log from the route settings object
     log("from ${from.toString()}");
     final signInRoute = RouteSettings(name: '/signin', arguments: null);
     //log signInRoute
@@ -201,41 +230,10 @@ class RouteConfiguration {
     else if (signedIn && from.toString() == signInRoute.toString()) {
       log("_guard signed in 444$from");
       return signInRoute;
+    } else {
+      log("_guard signed in 555$from");
+      return signInRoute;
     }
-    return from;
-
-    // for (final path in paths) {
-    //   final regExpPattern = RegExp(path.pattern);
-    //   if (regExpPattern.hasMatch(from)) {
-    //     final firstMatch = regExpPattern.firstMatch(settings.name!)!;
-    //     final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
-    //     var test = '';
-    //     test = settings.name!;
-    //     var guarded_route = _guard(settings);
-
-    //     log("settings signed in firstMatch $test");
-    //     log("settings signed in match $settings");
-    //     log("settings signed in guarded_route $guarded_route");
-
-    //     if (kIsWeb) {
-    //       return NoAnimationMaterialPageRoute<void>(
-    //         builder: (context) => path.builder(context, match),
-    //         settings: guarded_route,
-    //       );
-    //     }
-    //     if (path.openInSecondScreen) {
-    //       return TwoPanePageRoute<void>(
-    //         builder: (context) => path.builder(context, match),
-    //         settings: guarded_route,
-    //       );
-    //     } else {
-    //       return MaterialPageRoute<void>(
-    //         builder: (context) => path.builder(context, match),
-    //         settings: guarded_route,
-    //       );
-    //     }
-    //   }
-    // }
   }
 }
 

@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 const String defaultRoute = '/starter';
+const String loginRoute = '/signin';
