@@ -15,13 +15,9 @@ import 'package:gallery/data/gallery_options.dart';
 import 'package:gallery/pages/backdrop.dart';
 import 'package:gallery/pages/splash.dart';
 import 'package:gallery/routes.dart';
-import 'package:gallery/routing/delegate.dart';
-import 'package:gallery/routing/parser_new.dart';
-import 'package:gallery/routing/route_state_new.dart';
 import 'package:gallery/themes/gallery_theme_data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_strategy/url_strategy.dart';
-
 export 'package:gallery/data/demos.dart' show pumpDeferredLibraries;
 
 void main() async {
@@ -34,13 +30,7 @@ void main() async {
   //
   // On mobile platforms, both functions are no-ops.
   setHashUrlStrategy();
-  // setPathUrlStrategy();
-
-  // WidgetsFlutterBinding.ensureInitialized();
-  // RouteConfiguration routeConfiguration = RouteConfiguration();
-  // Route<dynamic>? route = routeConfiguration.onGenerateRoute(RouteSettings());
-
-  // await AppConfig.forEnvironment('dev');
+  WidgetsFlutterBinding.ensureInitialized();
 
   GoogleFonts.config.allowRuntimeFetching = false;
   GalleryApp galleryApp = GalleryApp();
@@ -48,10 +38,7 @@ void main() async {
   bool signedIn = await campusAppsPortalInstance.getSignedIn();
   log('signedIn 1: $signedIn! ');
 
-  galleryApp._auth.getSignedIn().then((value) => signedIn = value);
-  log('signedIn 2: $signedIn! ');
   signedIn = await galleryApp._auth.getSignedIn();
-  log('signedIn 3: $signedIn! ');
   campusAppsPortalInstance.setSignedIn(signedIn);
   runApp(GalleryApp());
 }
@@ -73,16 +60,7 @@ class GalleryApp extends StatefulWidget {
 
 class _GalleryAppState extends State<GalleryApp> {
   late final String loginRoute = '/signin';
-  // final _navigatorKey = GlobalKey<NavigatorState>();
-  // late final RouteState _routeState;
-  // late final SimpleRouterDelegate _routerDelegate;
-  // late final TemplateRouteParser _routeParser;
-
   get isTestMode => false;
-
-  // get _auth => null;
-
-  // get _handleAuthStateChanged => null;
 
   @override
   Widget build(BuildContext context) {
