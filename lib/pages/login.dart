@@ -69,52 +69,65 @@ class _LogInScreenState extends State<LoginPage> {
                     child: Wrap(children: [
                       Column(children: [
                         Text(
-                          "Avinya Academy Student Admissions",
+                          "Avinya Academy Apps Portal",
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Google Sans",
+                          ),
                         ),
                         SizedBox(height: 20.0),
                         Text(
-                            """To proceed to the next steps of the appliation process, please sign in with your Gmail address"""),
+                          """To proceed to the Apps Portal, please sign in.""",
+                          style: TextStyle(
+                            fontFamily: "Google Sans",
+                          ),
+                        ),
                         SizedBox(height: 10.0),
                         Text(
-                            "Once you sign in, you will be directed to the rest of the application froms"),
-                        SizedBox(height: 10.0),
-                        Text(
-                            """If you have already completed the application forms, you can sign in to view the application dashboard where you will see the status of your application."""),
+                          "Once you sign in, you will be directed to the Apps Portal",
+                          style: TextStyle(
+                            fontFamily: "Google Sans",
+                          ),
+                        ),
                         SizedBox(height: 10.0),
                       ]),
                     ]),
                   ),
                 ),
               ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.yellowAccent),
-                  shadowColor: MaterialStateProperty.all(Colors.lightBlue),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/google.png',
-                      fit: BoxFit.contain,
-                      width: 30,
-                    ),
-                    Text(
-                      "Login with Google",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.yellowAccent),
+                    shadowColor: MaterialStateProperty.all(Colors.lightBlue),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/login.png',
+                        fit: BoxFit.contain,
+                        width: 40,
                       ),
-                    ),
-                  ],
+                      Text(
+                        "Login with Asgardeo",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Google Sans",
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () async {
+                    await authenticate(
+                        Uri.parse(_issuerUrl), _clientId, _scopes);
+                  },
                 ),
-                onPressed: () async {
-                  await authenticate(Uri.parse(_issuerUrl), _clientId, _scopes);
-                },
               ),
             ],
           ),
