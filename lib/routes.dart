@@ -11,6 +11,7 @@ import 'package:gallery/deferred_widget.dart';
 import 'package:gallery/main.dart';
 import 'package:gallery/pages/demo.dart';
 import 'package:gallery/pages/home.dart';
+import 'package:gallery/pages/login.dart';
 import 'package:gallery/studies/crane/app.dart' deferred as crane;
 import 'package:gallery/studies/crane/routes.dart' as crane_routes;
 import 'package:gallery/studies/fortnightly/app.dart' deferred as fortnightly;
@@ -20,7 +21,6 @@ import 'package:gallery/studies/rally/routes.dart' as rally_routes;
 import 'package:gallery/studies/reply/app.dart' as reply;
 import 'package:gallery/studies/reply/routes.dart' as reply_routes;
 import 'package:gallery/studies/shrine/app.dart' deferred as shrine;
-import 'package:gallery/studies/shrine/login.dart';
 import 'package:gallery/studies/shrine/routes.dart' as shrine_routes;
 import 'package:gallery/studies/starter/app.dart' as starter_app;
 import 'package:gallery/studies/starter/routes.dart' as starter_app_routes;
@@ -140,11 +140,7 @@ class RouteConfiguration {
                 if (snapshot.hasData && snapshot.data!) {
                   return path.builder(context, match);
                 }
-                return Scaffold(
-                  body: Center(
-                    child: Text('You are not authorized to access this page'),
-                  ),
-                );
+                return LoginPage();
               },
             ),
             settings: settings,
@@ -158,11 +154,7 @@ class RouteConfiguration {
                 if (snapshot.hasData && snapshot.data!) {
                   return path.builder(context, match);
                 }
-                return Scaffold(
-                  body: Center(
-                    child: Text('You are not authorized to access this page'),
-                  ),
-                );
+                return LoginPage();
               },
             ),
             settings: settings,
@@ -175,11 +167,7 @@ class RouteConfiguration {
                 if (snapshot.hasData && snapshot.data!) {
                   return path.builder(context, match);
                 }
-                return Scaffold(
-                  body: Center(
-                    child: Text('You are not authorized to access this page'),
-                  ),
-                );
+                return LoginPage();
               },
             ),
             settings: settings,
