@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:quiver/core.dart';
 
-import 'parser.dart';
+import 'parser_new.dart';
 
 /// A route path that has been parsed by [TemplateRouteParser].
 class ParsedRoute {

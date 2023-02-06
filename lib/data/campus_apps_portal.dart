@@ -33,6 +33,10 @@ class CampusAppsPortal {
     this.auth = auth;
   }
 
+  CampusAppsPortalAuth? getAuth() {
+    return this.auth;
+  }
+
   Future<bool> getAuthSignedIn() async {
     final signedIn = await auth!.getSignedIn();
     return signedIn;

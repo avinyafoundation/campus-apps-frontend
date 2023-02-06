@@ -15,6 +15,9 @@ import 'package:gallery/data/gallery_options.dart';
 import 'package:gallery/pages/backdrop.dart';
 import 'package:gallery/pages/splash.dart';
 import 'package:gallery/routes.dart';
+import 'package:gallery/routing/delegate.dart';
+import 'package:gallery/routing/parser_new.dart';
+import 'package:gallery/routing/route_state_new.dart';
 import 'package:gallery/themes/gallery_theme_data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -34,6 +37,8 @@ void main() async {
   // setPathUrlStrategy();
 
   // WidgetsFlutterBinding.ensureInitialized();
+  // RouteConfiguration routeConfiguration = RouteConfiguration();
+  // Route<dynamic>? route = routeConfiguration.onGenerateRoute(RouteSettings());
 
   // await AppConfig.forEnvironment('dev');
 
@@ -42,25 +47,42 @@ void main() async {
   campusAppsPortalInstance.setAuth(galleryApp._auth);
   bool signedIn = await campusAppsPortalInstance.getSignedIn();
   log('signedIn 1: $signedIn! ');
-  campusAppsPortalInstance.setSignedIn(signedIn);
+
   galleryApp._auth.getSignedIn().then((value) => signedIn = value);
   log('signedIn 2: $signedIn! ');
   signedIn = await galleryApp._auth.getSignedIn();
   log('signedIn 3: $signedIn! ');
+  campusAppsPortalInstance.setSignedIn(signedIn);
   runApp(GalleryApp());
 }
 
-class GalleryApp extends StatelessWidget {
+class GalleryApp extends StatefulWidget {
+  // GalleryApp({super.key});
   GalleryApp({
     super.key,
     this.initialRoute,
     this.isTestMode = false,
   });
-
-  final String? initialRoute;
-  final bool isTestMode;
+  late final String? initialRoute;
+  late final bool isTestMode;
   final _auth = CampusAppsPortalAuth();
-  static const String loginRoute = '/signin';
+
+  @override
+  State<GalleryApp> createState() => _GalleryAppState();
+}
+
+class _GalleryAppState extends State<GalleryApp> {
+  late final String loginRoute = '/signin';
+  // final _navigatorKey = GlobalKey<NavigatorState>();
+  // late final RouteState _routeState;
+  // late final SimpleRouterDelegate _routerDelegate;
+  // late final TemplateRouteParser _routeParser;
+
+  get isTestMode => false;
+
+  // get _auth => null;
+
+  // get _handleAuthStateChanged => null;
 
   @override
   Widget build(BuildContext context) {
@@ -78,29 +100,37 @@ class GalleryApp extends StatelessWidget {
         builder: (context) {
           final options = GalleryOptions.of(context);
           return MaterialApp(
-            restorationScopeId: 'rootGallery',
-            title: 'Flutter Gallery',
-            debugShowCheckedModeBanner: false,
-            themeMode: options.themeMode,
-            theme: GalleryThemeData.lightThemeData.copyWith(
-              platform: options.platform,
-            ),
-            darkTheme: GalleryThemeData.darkThemeData.copyWith(
-              platform: options.platform,
-            ),
-            localizationsDelegates: const [
-              ...GalleryLocalizations.localizationsDelegates,
-              LocaleNamesLocalizationsDelegate()
-            ],
-            initialRoute: loginRoute,
-            supportedLocales: GalleryLocalizations.supportedLocales,
-            locale: options.locale,
-            localeListResolutionCallback: (locales, supportedLocales) {
-              deviceLocale = locales?.first;
-              return basicLocaleListResolution(locales, supportedLocales);
-            },
-            onGenerateRoute: RouteConfiguration.onGenerateRoute,
-          );
+              restorationScopeId: 'rootGallery',
+              title: 'Flutter Gallery',
+              debugShowCheckedModeBanner: false,
+              themeMode: options.themeMode,
+              theme: GalleryThemeData.lightThemeData.copyWith(
+                platform: options.platform,
+              ),
+              darkTheme: GalleryThemeData.darkThemeData.copyWith(
+                platform: options.platform,
+              ),
+              localizationsDelegates: const [
+                ...GalleryLocalizations.localizationsDelegates,
+                LocaleNamesLocalizationsDelegate()
+              ],
+              initialRoute: loginRoute,
+              supportedLocales: GalleryLocalizations.supportedLocales,
+              locale: options.locale,
+              localeListResolutionCallback: (locales, supportedLocales) {
+                deviceLocale = locales?.first;
+                return basicLocaleListResolution(locales, supportedLocales);
+              },
+              onGenerateRoute: (settings) {
+                return RouteConfiguration.onGenerateRoute(settings);
+              },
+              onUnknownRoute: (RouteSettings settings) {
+                return MaterialPageRoute<void>(
+                  settings: settings,
+                  builder: (BuildContext context) =>
+                      Scaffold(body: Center(child: Text('Not Found'))),
+                );
+              });
         },
       ),
     );
