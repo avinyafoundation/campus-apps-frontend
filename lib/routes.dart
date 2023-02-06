@@ -172,6 +172,54 @@ class RouteConfiguration {
     return null;
   }
 
+  // static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  //   for (final path in paths) {
+  //     final regExpPattern = RegExp(path.pattern);
+  //     if (regExpPattern.hasMatch(settings.name!)) {
+  //       final firstMatch = regExpPattern.firstMatch(settings.name!)!;
+  //       final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
+  //       if (kIsWeb) {
+  //         // return NoAnimationMaterialPageRoute<void>(
+  //         //   builder: (context) => path.builder(context, match),
+  //         //   settings: settings,
+  //         // );
+  //         return NoAnimationMaterialPageRoute<void>(
+  //           builder: (context) => RouteGuard(
+  //               guard: () => isAuthorized(),
+  //               child: path.builder(context, match)),
+  //           settings: settings,
+  //         );
+  //       }
+  //       if (path.openInSecondScreen) {
+  //         // return TwoPanePageRoute<void>(
+  //         //   builder: (context) => path.builder(context, match),
+  //         //   settings: settings,
+  //         // );
+  //         return TwoPanePageRoute<void>(
+  //           builder: (context) => RouteGuard(
+  //               guard: () => isAuthorized(),
+  //               child: path.builder(context, match)),
+  //           settings: settings,
+  //         );
+  //       } else {
+  //         // return MaterialPageRoute<void>(
+  //         //   builder: (context) => path.builder(context, match),
+  //         //   settings: settings,
+  //         // );
+  //         return MaterialPageRoute<void>(
+  //           builder: (context) => RouteGuard(
+  //               guard: () => isAuthorized(),
+  //               child: path.builder(context, match)),
+  //           settings: settings,
+  //         );
+  //       }
+  //     }
+  //   }
+
+  //   // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
+  //   return null;
+  // }
+
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     for (final path in paths) {
       final regExpPattern = RegExp(path.pattern);
@@ -179,26 +227,72 @@ class RouteConfiguration {
         final firstMatch = regExpPattern.firstMatch(settings.name!)!;
         final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
         if (kIsWeb) {
+          // return NoAnimationMaterialPageRoute<void>(
+          //   builder: (context) => path.builder(context, match),
+          //   settings: settings,
+          // );
           return NoAnimationMaterialPageRoute<void>(
-            builder: (context) => path.builder(context, match),
+            builder: (context) => FutureBuilder<bool>(
+              future: isAuthorized(settings),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  return path.builder(context, match);
+                }
+                return Scaffold(
+                  body: Center(
+                    child: Text('You are not authorized to access this page'),
+                  ),
+                );
+              },
+            ),
             settings: settings,
           );
         }
         if (path.openInSecondScreen) {
+          // return TwoPanePageRoute<void>(
+          //   builder: (context) => path.builder(context, match),
+          //   settings: settings,
+          // );
           return TwoPanePageRoute<void>(
-            builder: (context) => path.builder(context, match),
+            builder: (context) => FutureBuilder<bool>(
+              future: isAuthorized(settings),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  return path.builder(context, match);
+                }
+                return Scaffold(
+                  body: Center(
+                    child: Text('You are not authorized to access this page'),
+                  ),
+                );
+              },
+            ),
             settings: settings,
           );
         } else {
+          // return MaterialPageRoute<void>(
+          //   builder: (context) => path.builder(context, match),
+          //   settings: settings,
+          // );
           return MaterialPageRoute<void>(
-            builder: (context) => path.builder(context, match),
+            builder: (context) => FutureBuilder<bool>(
+              future: isAuthorized(settings),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  return path.builder(context, match);
+                }
+                return Scaffold(
+                  body: Center(
+                    child: Text('You are not authorized to access this page'),
+                  ),
+                );
+              },
+            ),
             settings: settings,
           );
         }
       }
     }
-
-    // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
     return null;
   }
 
@@ -233,6 +327,41 @@ class RouteConfiguration {
     } else {
       log("_guard signed in 555$from");
       return signInRoute;
+    }
+  }
+}
+
+class RouteGuard extends StatelessWidget {
+  final Widget child;
+  final Function guard;
+
+  const RouteGuard({required this.child, required this.guard});
+
+  @override
+  Widget build(BuildContext context) {
+    if (guard()) {
+      return child;
+    }
+    return Scaffold(
+      body: Center(
+        child: Text('You are not authorized to access this page'),
+      ),
+    );
+  }
+}
+
+Future<bool> isAuthorized(RouteSettings settings) async {
+  bool signedIn = await campusAppsPortalInstance.getSignedIn();
+  //log signedIn
+  log("signedIn $signedIn");
+  if (settings.name == '/signin') {
+    return Future.value(true);
+  } else {
+    log("signedIsignedInn $signedIn");
+    if (signedIn) {
+      return Future.value(true);
+    } else {
+      return Future.value(false);
     }
   }
 }
