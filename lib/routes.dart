@@ -2,20 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:developer';
-import 'dart:html';
 
 import 'package:dual_screen/dual_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery/auth.dart';
 import 'package:gallery/data/campus_apps_portal.dart';
 import 'package:gallery/deferred_widget.dart';
 import 'package:gallery/main.dart';
 import 'package:gallery/pages/demo.dart';
 import 'package:gallery/pages/home.dart';
-import 'package:gallery/routing/parsed_route.dart';
-import 'package:gallery/routing/parser_new.dart';
-import 'package:gallery/routing/route_state_new.dart';
 import 'package:gallery/studies/crane/app.dart' deferred as crane;
 import 'package:gallery/studies/crane/routes.dart' as crane_routes;
 import 'package:gallery/studies/fortnightly/app.dart' deferred as fortnightly;
@@ -29,7 +24,6 @@ import 'package:gallery/studies/shrine/login.dart';
 import 'package:gallery/studies/shrine/routes.dart' as shrine_routes;
 import 'package:gallery/studies/starter/app.dart' as starter_app;
 import 'package:gallery/studies/starter/routes.dart' as starter_app_routes;
-import 'package:path_to_regexp/path_to_regexp.dart';
 
 typedef PathWidgetBuilder = Widget Function(BuildContext, String?);
 
@@ -132,94 +126,6 @@ class RouteConfiguration {
   /// route. Set it on the [MaterialApp.onGenerateRoute] or
   /// [WidgetsApp.onGenerateRoute] to make use of the [paths] for route
   /// matching.
-  static Future<Route?> onGenerateRoute2(RouteSettings settings) async {
-    log("settings signed in $settings");
-    for (final path in paths) {
-      final regExpPattern = RegExp(path.pattern);
-      if (regExpPattern.hasMatch(settings.name!)) {
-        final firstMatch = regExpPattern.firstMatch(settings.name!)!;
-        final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
-        var test = '';
-        test = settings.name!;
-        var guarded_route = await _guard(settings);
-        // var guarded_route_name = RouteSettings("/signin", null);
-
-        log("settings signed in firstMatch $match");
-        log("settings signed in match $settings");
-        log("settings signed in guarded_route $guarded_route");
-
-        if (kIsWeb) {
-          return NoAnimationMaterialPageRoute<void>(
-            builder: (context) => path.builder(context, match),
-            settings: guarded_route,
-          );
-        }
-        if (path.openInSecondScreen) {
-          return TwoPanePageRoute<void>(
-            builder: (context) => path.builder(context, match),
-            settings: guarded_route,
-          );
-        } else {
-          return MaterialPageRoute<void>(
-            builder: (context) => path.builder(context, match),
-            settings: guarded_route,
-          );
-        }
-      }
-    }
-
-    // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
-    return null;
-  }
-
-  // static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-  //   for (final path in paths) {
-  //     final regExpPattern = RegExp(path.pattern);
-  //     if (regExpPattern.hasMatch(settings.name!)) {
-  //       final firstMatch = regExpPattern.firstMatch(settings.name!)!;
-  //       final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
-  //       if (kIsWeb) {
-  //         // return NoAnimationMaterialPageRoute<void>(
-  //         //   builder: (context) => path.builder(context, match),
-  //         //   settings: settings,
-  //         // );
-  //         return NoAnimationMaterialPageRoute<void>(
-  //           builder: (context) => RouteGuard(
-  //               guard: () => isAuthorized(),
-  //               child: path.builder(context, match)),
-  //           settings: settings,
-  //         );
-  //       }
-  //       if (path.openInSecondScreen) {
-  //         // return TwoPanePageRoute<void>(
-  //         //   builder: (context) => path.builder(context, match),
-  //         //   settings: settings,
-  //         // );
-  //         return TwoPanePageRoute<void>(
-  //           builder: (context) => RouteGuard(
-  //               guard: () => isAuthorized(),
-  //               child: path.builder(context, match)),
-  //           settings: settings,
-  //         );
-  //       } else {
-  //         // return MaterialPageRoute<void>(
-  //         //   builder: (context) => path.builder(context, match),
-  //         //   settings: settings,
-  //         // );
-  //         return MaterialPageRoute<void>(
-  //           builder: (context) => RouteGuard(
-  //               guard: () => isAuthorized(),
-  //               child: path.builder(context, match)),
-  //           settings: settings,
-  //         );
-  //       }
-  //     }
-  //   }
-
-  //   // If no match was found, we let [WidgetsApp.onUnknownRoute] handle it.
-  //   return null;
-  // }
-
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     for (final path in paths) {
       final regExpPattern = RegExp(path.pattern);
@@ -227,10 +133,6 @@ class RouteConfiguration {
         final firstMatch = regExpPattern.firstMatch(settings.name!)!;
         final match = (firstMatch.groupCount == 1) ? firstMatch.group(1) : null;
         if (kIsWeb) {
-          // return NoAnimationMaterialPageRoute<void>(
-          //   builder: (context) => path.builder(context, match),
-          //   settings: settings,
-          // );
           return NoAnimationMaterialPageRoute<void>(
             builder: (context) => FutureBuilder<bool>(
               future: isAuthorized(settings),
@@ -249,10 +151,6 @@ class RouteConfiguration {
           );
         }
         if (path.openInSecondScreen) {
-          // return TwoPanePageRoute<void>(
-          //   builder: (context) => path.builder(context, match),
-          //   settings: settings,
-          // );
           return TwoPanePageRoute<void>(
             builder: (context) => FutureBuilder<bool>(
               future: isAuthorized(settings),
@@ -270,10 +168,6 @@ class RouteConfiguration {
             settings: settings,
           );
         } else {
-          // return MaterialPageRoute<void>(
-          //   builder: (context) => path.builder(context, match),
-          //   settings: settings,
-          // );
           return MaterialPageRoute<void>(
             builder: (context) => FutureBuilder<bool>(
               future: isAuthorized(settings),
@@ -294,40 +188,6 @@ class RouteConfiguration {
       }
     }
     return null;
-  }
-
-  // static Route<dynamic>? onGenerateRouteHelper(RouteSettings settings) {
-  //   onGenerateRoute(settings).then((value) {
-  //     return value;
-  //   });
-  //   // return await onGenerateRoute(settings);
-  // }
-
-  static Future<RouteSettings> _guard(RouteSettings from) async {
-    bool signedIn = await campusAppsPortalInstance.getSignedIn();
-    final baseRoute = '/demo';
-    log("from ${from.toString()}");
-    final signInRoute = RouteSettings(name: '/signin', arguments: null);
-    //log signInRoute
-    log("signInRoute ${signInRoute.toString()}");
-
-    // Go to /apply if the user is not signed in
-    log("_guard signed in 222$from");
-    // log("_guard JWT sub ${jwt_sub}");
-    log("_guard from ${from.toString()}\n");
-    if (!signedIn && from.toString() != signInRoute.toString()) {
-      // Go to /signin if the user is not signed in
-      log("_guard signed in 333$from");
-      return signInRoute;
-    }
-    // Go to /application if the user is signed in and tries to go to /signin.
-    else if (signedIn && from.toString() == signInRoute.toString()) {
-      log("_guard signed in 444$from");
-      return signInRoute;
-    } else {
-      log("_guard signed in 555$from");
-      return signInRoute;
-    }
   }
 }
 
